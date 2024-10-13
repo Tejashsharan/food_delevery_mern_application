@@ -1,11 +1,9 @@
-// config/db.js
 const mongoose = require('mongoose');
 require('dotenv').config(); // For loading environment variables
 
-// Function to connect to the MongoDB database
 const connectDB = async () => {
   try {
-    // Connect to MongoDB using the URI from environment variables
+    // The connection string now points to 'mongodb://mongo:27017/food_app_db'
     const conn = await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

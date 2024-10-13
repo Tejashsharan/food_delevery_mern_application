@@ -1,0 +1,40 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/food_app_db  # Connect to MongoDB using the service name 'mongo'
+    volumes:
+      - ./backend:/app
+    networks:
+      - mern-network
+    depends_on:
+      - mongo  # Ensure MongoDB starts before the backend
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - mern-network
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"  # Expose the MongoDB port
+    volumes:
+      - mongo-data:/data/db  # Persist MongoDB data
+    networks:
+      - mern-network
+
+networks:
+  mern-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
