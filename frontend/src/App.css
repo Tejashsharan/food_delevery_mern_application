@@ -22,8 +22,8 @@ nav ul{
   width: 100%;
   height: 100vh;
   margin-top: -20px;
-  /* background-image: linear-gradient(-45deg,rgb(8, 222, 251), rgb(5, 5, 190),rgb(8, 222, 251)); */
-  background-image: linear-gradient(-45deg,purple,orange,purple);
+  background-image: linear-gradient(-45deg,rgb(8, 222, 251), rgb(5, 5, 190),rgb(8, 222, 251));
+  /* background-image: linear-gradient(-45deg,purple,orange,purple); */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -61,7 +61,6 @@ nav ul{
   flex-direction: column;
   transition: 0.3s;
   cursor: pointer;
-  /* border: 1px solid black; */
 }
 .restaurants:hover{
   scale: 0.9;
@@ -82,4 +81,67 @@ nav ul{
   padding: 10px;
   margin: 20px;
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.menu{
+  padding: 10px;
+  margin: 20px;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.menu span{
+  font-size: larger;
+  font-weight: 700;
+}
+.items{
+  margin-top: 50px;
+}
+.item{
+  max-width: 80%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 5px;
+  border-bottom: 1px solid black;
+}
+.properties{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 10px;
+}
+.properties div{
+  padding: 5px;
+  font-size: smaller;
+}
+.properties .name{
+  font-size: large;
+  font-weight: 500;
+}
+.add_food {
+  position: relative;
+  display: inline-block; 
+}
+
+.add_food img {
+  width: 125px;
+  height: 125px;
+  border-radius: 12px;
+  position: relative; 
+  z-index: 1; 
+}
+
+.add {
+  background-image: linear-gradient(-45deg,blue,blue,blue);
+  color: white; 
+  height: 25px;
+  width: 75px;
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 90px;
+  transform: translateX(-50%); 
+  text-align: center;
+  line-height: 25px; 
+  border-radius: 5px; 
+  cursor: pointer;
 }
