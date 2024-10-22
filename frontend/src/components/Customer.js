@@ -8,7 +8,8 @@ const Customer = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('http://localhost:5000/api/restaurants/', {
+        // const res = await fetch('http://localhost:5000/api/restaurants/', {
+        const res = await fetch('http://backend/api/restaurants/', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

@@ -52,6 +52,7 @@ nav ul{
   font-weight: 600;
   width: 84%;
   background-color: aqua;
+  cursor: pointer;
 }
 .restaurants{
   max-width: 200px;
@@ -87,13 +88,80 @@ nav ul{
   padding: 10px;
   margin: 20px;
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  position: relative;
 }
 .menu span{
   font-size: larger;
   font-weight: 700;
 }
+.wishlist {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 500px;
+  width: 80%;
+  z-index: 100;
+  background-color: rgba(6, 0, 0, 0.8);
+  position: absolute;
+  top: 0;
+  left: 10%;
+  color: white;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.payButton {
+  margin-top: auto;
+  width: 100%;
+  text-align: center;
+  padding: 10px 0 10px 0;
+  background-color: #28a745;
+  color: white;
+  font-size: 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+.payButton:hover {
+  background-color: #218838;
+}
+
+.wishitem{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 80%;
+  height: auto;
+  padding: 10px;
+  margin: 20px;
+}
+.wishitem_count{
+  display: flex;
+  justify-content: space-around;
+  width: 100px;
+}
+.increment_count{
+  background-color: green;
+  width: 18px;
+  padding-left: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.decrement_count{
+  background-color: red;
+  width: 18px;
+  padding-left: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+}
 .items{
   margin-top: 50px;
+  z-index: 99;
 }
 .item{
   max-width: 80%;
@@ -144,4 +212,10 @@ nav ul{
   line-height: 25px; 
   border-radius: 5px; 
   cursor: pointer;
+  user-select: none;
+}
+
+.hide{
+  visibility: hidden;
+  display: block;
 }
