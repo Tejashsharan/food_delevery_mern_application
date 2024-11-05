@@ -8,7 +8,7 @@ const router = express.Router();
 // Create a new order (only by customers)
 router.post('/', authMiddleware, async (req, res) => {
   if (req.user.role !== 'customer') return res.status(403).json({ message: 'Access denied' });
-
+  // console.log(req.body)
   const { restaurantId, items, total, deliveryAddress } = req.body;
   try {
     const restaurant = await Restaurant.findById(restaurantId);
@@ -16,7 +16,7 @@ router.post('/', authMiddleware, async (req, res) => {
 
     const newOrder = new Order({
       user: req.user.id,
-      restaurant: restaurant.id,
+      restaurant: restaurantId, // Corrected here
       items,
       total,
       deliveryAddress,
@@ -26,9 +26,11 @@ router.post('/', authMiddleware, async (req, res) => {
     const savedOrder = await newOrder.save();
     res.json(savedOrder);
   } catch (error) {
+    console.error('Order creation error:', error); // Logs the error
     res.status(500).json({ message: 'Server Error' });
   }
 });
+
 
 // Get all orders for a specific user
 router.get('/user/:userId', authMiddleware, async (req, res) => {

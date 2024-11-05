@@ -1,18 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
 
 const CustMenu = () => {
   const { id } = useParams();
+  const { userId } = useUser();
   const [menuData, setMenuData] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [contain, setContain] = useState(false);
   const [show, setshow] = useState(false);
+  const [showOrder, setShowOrder] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(''); // Track search input
+  const [searchCategory, setSearchCategory] = useState('cuisine'); // Track selected category
+
+  const fetchOrder = async () => {
+    setShowOrder(!showOrder)
+    const res = await fetch(`http://localhost:5000/api/orders/user/${userId}`, {
+      // const res = await fetch(`http://backend/api/orders/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('Authorization')
+      }
+    });
+
+    const data = await res.json()
+    setOrders(data)
+    console.log(data)
+  }
+
+  const handleSearch = async () => {
+    try {
+      // Construct the API URL with query parameters based on selected category
+      const queryParam = searchCategory === 'name' ? `name=${searchTerm}` : `price=${searchTerm}`;
+      const res = await fetch(`http://localhost:5000/api/menu/${id}?${queryParam}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (res.ok) {
+        const data = await res.json();
+        setMenuData(data); // Update menu data with the search results
+        console.log(data);
+      } else {
+        console.error('Failed to fetch data:', res.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  
 
   useEffect(() => {
     async function fetchData() {
       try {
-        // const res = await fetch(`http://localhost:5000/api/menu/${id}`, {
-        const res = await fetch(`http://backend/api/menu/${id}`, {
+        const res = await fetch(`http://localhost:5000/api/menu/${id}`, {
+          // const res = await fetch(`http://backend/api/menu/${id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -29,19 +75,19 @@ const CustMenu = () => {
         console.log('error', error);
       }
     }
-  
+
     fetchData();
-  
+
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
     document.body.appendChild(script);
-  
+
     return () => {
       document.body.removeChild(script);
     };
   }, [id]);
-  
+
 
   const capitalize = (string) => {
     const strArr = string.split(' ');
@@ -67,13 +113,12 @@ const CustMenu = () => {
       newWishlist[index].count -= 1;
       setWishlist(newWishlist);
     } else if (newWishlist[index].count === 1) {
-      newWishlist.splice(index, 1); 
+      newWishlist.splice(index, 1);
       setWishlist(newWishlist);
       setContain(false)
       setshow(!show)
     }
   };
-  
 
   const findTotal = () => {
     let total = 0;
@@ -97,8 +142,43 @@ const CustMenu = () => {
     }
   }
 
+  const setItem = () => {
+    return wishlist.map((el) => el._id);
+  }
+
+  const createOrder = async () => {
+    try {
+      // console.log(id)
+      const res = await fetch(`http://localhost:5000/api/orders/`, {
+        // const res = await fetch(`http://backend/api/orders/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('Authorization')
+        },
+        body: JSON.stringify({
+          "restaurantId": id,
+          "items": setItem(),
+          "total": findTotal(),
+          "deliveryAddress": "sector v"
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        // setMenuData(data);
+        console.log(data);
+      } else {
+        console.error('Failed to fetch data:', res.statusText);
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+
+  }
+
   const handleOnPayment = async () => {
-    const totalAmount = findTotal(); 
+    const totalAmount = findTotal();
     const options = {
       key: "rzp_test_3kpqqSprgwKALf",
       amount: totalAmount * 100,
@@ -112,7 +192,7 @@ const CustMenu = () => {
       },
       prefill: {
         email: 'ritukumarisid@gmail.com',
-        contact: '6205919253' 
+        contact: '6205919253'
       },
       notes: {
         address: 'Your address'
@@ -121,30 +201,32 @@ const CustMenu = () => {
         color: '#3399cc'
       }
     };
-  
+
     const rzp = new window.Razorpay(options);
     rzp.open();
-  
+
     rzp.on('payment.failed', function (response) {
       alert(`Payment Failed! Error: ${response.error.description}`);
       console.error(response.error);
     });
 
     setshow(!show)
+    createOrder()
   };
-  
+
 
   return (
     <>
       <nav>
         <ul>
-          <li>
+          <li className='middle'>
             <svg
               width="40px"
               height="40px"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              onClick={fetchOrder}
             >
               <path
                 d="M12.12 12.78C12.05 12.77 11.96 12.77 11.88 12.78C10.12 12.72 8.71997 11.28 8.71997 9.50998C8.71997 7.69998 10.18 6.22998 12 6.22998C13.81 6.22998 15.28 7.69998 15.28 9.50998C15.27 11.28 13.88 12.72 12.12 12.78Z"
@@ -170,6 +252,42 @@ const CustMenu = () => {
             </svg>
           </li>
           <li>
+            <div className="flex justify-center items-center p-4 space-x-4 bg-white rounded-lg">
+              <div className="flex bg-gray-100 p-2 w-72 space-x-2 rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  className="bg-gray-100 outline-none text-sm"
+                  type="text"
+                  placeholder="Article name or keyword..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              {/* Dropdown for Category */}
+              <div className="flex items-center bg-gray-100 py-2 px-3 rounded-md text-gray-500 font-semibold text-sm space-x-2">
+                <select
+                  className="bg-transparent outline-none cursor-pointer"
+                  value={searchCategory}
+                  onChange={(e) => setSearchCategory(e.target.value)}
+                >
+                  <option value="price">Price</option>
+                  <option value="name">Name</option>
+                </select>
+              </div>
+
+              <div
+                className="bg-blue-600 py-2 px-4 text-white font-semibold rounded-md hover:shadow-md transition duration-300 cursor-pointer text-sm"
+                onClick={handleSearch}
+              >
+                <span>Search</span>
+              </div>
+            </div>
+
+          </li>
+          <li className='middle'>
             <svg
               version="1.0"
               id="Layer_1"
@@ -183,11 +301,11 @@ const CustMenu = () => {
               onClick={addedToWishlist}
             >
               <g>
-                <path fill={contain ? "white" : "#231F20"} d="M8,60c0,2.211,1.789,4,4,4h40c2.211,0,4-1.789,4-4v-2H8V60z" />
-                <path fill={contain ? "white" : "#231F20"} d="M36,36c-0.553,0-1.053,0.224-1.414,0.586l-1.879,1.871c-0.391,0.391-1.023,0.391-1.414,0l-1.879-1.871
+                <path fill={contain ? "blue" : "#231F20"} d="M8,60c0,2.211,1.789,4,4,4h40c2.211,0,4-1.789,4-4v-2H8V60z" />
+                <path fill={contain ? "blue" : "#231F20"} d="M36,36c-0.553,0-1.053,0.224-1.414,0.586l-1.879,1.871c-0.391,0.391-1.023,0.391-1.414,0l-1.879-1.871
           C29.053,36.224,28.553,36,28,36c-1.104,0-2,0.896-2,2c0,0.553,0.481,1.076,0.844,1.438L32,44.594l5.156-5.156
           C37.519,39.076,38,38.553,38,38C38,36.896,37.104,36,36,36z"/>
-                <path fill={contain ? "white" : "#231F20"} d="M54,20H44v-8c0-6.627-5.373-12-12-12S20,5.373,20,12v8H10c-1.105,0-2,0.895-2,2v34h48V22
+                <path fill={contain ? "blue" : "#231F20"} d="M54,20H44v-8c0-6.627-5.373-12-12-12S20,5.373,20,12v8H10c-1.105,0-2,0.895-2,2v34h48V22
           C56,20.895,55.105,20,54,20z M38.547,40.875l-5.84,5.841c-0.391,0.391-1.023,0.391-1.414,0l-5.855-5.856
           C24.713,40.136,24,39.104,24,38c0-2.209,1.791-4,4-4c1.104,0,2.104,0.448,2.828,1.172L32,36.336l1.172-1.164
           C33.896,34.448,34.896,34,36,34c2.209,0,4,1.791,4,4C40,39.104,39.271,40.151,38.547,40.875z M26,20v-8c0-3.313,2.687-6,6-6
@@ -199,7 +317,7 @@ const CustMenu = () => {
         </ul>
       </nav>
 
-      <div className="menu">
+      {!showOrder ? <div className="menu">
         <span>Recommended Menu Items</span>
         <div className="items">
           {menuData.length > 0 ? (
@@ -241,7 +359,19 @@ const CustMenu = () => {
           <div className='payButton' onClick={handleOnPayment}>Pay ₹{findTotal()}</div>
 
         </div>
-      </div>
+      </div> :
+        <div className='orders'>
+          {orders.map((order) => (
+            <div key={order._id} className='order'>
+              <h4>Restaurant: {order.restaurant.name}</h4>
+              <p>Total: ${order.total}</p>
+              <p>Status: {order.status}</p>
+              <p>Delivery Address: {order.deliveryAddress}</p>
+              <p>Order Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+            </div>
+          ))}
+        </div>
+      }
     </>
   );
 };

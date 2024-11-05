@@ -5,7 +5,7 @@ const Home = () => {
 
   return (
     <div>
-      <nav>
+      <nav className='navbar'>
         <ul>
             <Link to={'/Login'}><li>Login</li></Link>
             <Link to={'/Signup'}><li>Sign Up</li></Link>

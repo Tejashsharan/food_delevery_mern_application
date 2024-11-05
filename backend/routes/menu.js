@@ -38,12 +38,29 @@ router.post('/:restaurantId', authMiddleware, async (req, res) => {
 // Get all menu items for a specific restaurant
 router.get('/:restaurantId', async (req, res) => {
   try {
-    const menuItems = await MenuItem.find({ restaurant: req.params.restaurantId });
+    // Get query parameters for price and name
+    const { price, name } = req.query;
+
+    // Build the query object dynamically
+    let query = { restaurant: req.params.restaurantId };
+
+    // Add price filter if provided
+    if (price) {
+      query.price = { $lte: price }; // Use $lte (less than or equal to) for price filtering
+    }
+
+    // Add name filter if provided
+    if (name) {
+      query.name = new RegExp(name, 'i'); // Case-insensitive regex search for name
+    }
+
+    const menuItems = await MenuItem.find(query);
     res.json(menuItems);
   } catch (error) {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+
 
 // Update a menu item (only by restaurant owner)
 router.put('/:restaurantId/:itemId', authMiddleware, async (req, res) => {

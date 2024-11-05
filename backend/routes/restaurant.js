@@ -10,6 +10,7 @@ router.post('/', authMiddleware, async (req, res) => {
 
   const { name, description, address, cuisine, img } = req.body;
   try {
+    console.log(req.user.id)
     const newRestaurant = new Restaurant({
       name,
       description,
@@ -29,14 +30,24 @@ router.post('/', authMiddleware, async (req, res) => {
 // Get all restaurants
 router.get('/', async (req, res) => {
   try {
-    const restaurants = await Restaurant.find().populate('owner', 'name');
-    // console.log(restaurants);  // Log the fetched restaurant data
+    const { name, cuisine } = req.query;
+
+    // Create a query object with conditions based on provided parameters
+    const query = {};
+    if (name) {
+      query.name = { $regex: name, $options: 'i' }; // case-insensitive search
+    }
+    if (cuisine) {
+      query.cuisine = { $regex: cuisine, $options: 'i' }; // case-insensitive search
+    }
+
+    const restaurants = await Restaurant.find(query).populate('owner', 'name');
     return res.json(restaurants);
   } catch (error) {
-    // console.error(error);  // Log the error details
     res.status(500).json({ message: 'Server Error' });
   }
 });
+
 
 
 // Get a specific restaurant
