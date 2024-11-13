@@ -9,6 +9,7 @@ const Home = () => {
         <ul>
             <Link to={'/Login'}><li>Login</li></Link>
             <Link to={'/Signup'}><li>Sign Up</li></Link>
+            
         </ul>
       </nav>
     </div>

@@ -58,6 +58,7 @@ nav ul,.navbar ul{
   margin: 3px;
   padding: 10px;
   font-size: larger;
+  color: black;
 }
 .log .logSub{
   margin-top: 15px;
@@ -79,13 +80,14 @@ nav ul,.navbar ul{
   flex-direction: column;
   transition: 0.3s;
   cursor: pointer;
+  margin: 30px;
 }
 .restaurants:hover{
   scale: 0.9;
 }
 .restaurants .rest_pic{
   max-width: 200px;
-  height: auto;
+  height: 112px;
   border-radius: 12px;
 }
 .restaurants .name{
@@ -95,10 +97,23 @@ nav ul,.navbar ul{
 .restaurants div{
   padding: 5px;
 }
+
+.rest_list{
+  display: flex;
+  /* grid-template-columns: auto auto auto; */
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .customer{
   padding: 10px;
   margin: 20px;
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.customer div h1{
+  margin-top: 50px;
 }
 
 .menu{
@@ -160,19 +175,24 @@ nav ul,.navbar ul{
   justify-content: space-around;
   width: 100px;
 }
+
+.wishitem_desc{
+  width: 50%;
+}
+
 .increment_count{
   background-color: green;
-  width: 18px;
+  width: 28px;
   padding-left: 10px;
-  border-radius: 12px;
+  border-radius: 50%;
   cursor: pointer;
   user-select: none;
 }
 .decrement_count{
   background-color: red;
-  width: 18px;
+  width: 28px;
   padding-left: 10px;
-  border-radius: 12px;
+  border-radius: 50%;
   cursor: pointer;
   user-select: none;
 }
@@ -193,6 +213,7 @@ nav ul,.navbar ul{
   flex-direction: column;
   justify-content: center;
   padding-left: 10px;
+  width: 75%;
 }
 .properties div{
   padding: 5px;

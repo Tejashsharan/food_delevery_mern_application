@@ -56,6 +56,7 @@ const Signup = () => {
           className='email'
           value={email}
           placeholder='Username'
+          color='black'
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
